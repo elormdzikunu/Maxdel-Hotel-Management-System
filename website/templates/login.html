@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Access | MAXDEL HOTEL</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-gold: #c5a059;
+            --dark-onyx: #1a1a1a;
+            --sidebar-bg: #111111;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--sidebar-bg);
+            /* Subtle geometric pattern background */
+            background-image: radial-gradient(circle at 2px 2px, rgba(197, 160, 89, 0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: #1e1e1e;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+        }
+
+        .logo-area { margin-bottom: 30px; }
+        .logo-area h2 { 
+            font-family: 'Playfair Display', serif; 
+            letter-spacing: 4px; 
+            font-size: 1.8rem; 
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        .logo-divider { 
+            width: 40px; 
+            height: 2px; 
+            background: var(--primary-gold); 
+            margin: 10px auto; 
+        }
+
+        .login-box h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary-gold);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            background: #252525;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary-gold);
+            background: #2a2a2a;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-gold);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover {
+            background: #b08d4a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(197, 160, 89, 0.2);
+        }
+
+        .footer-link {
+            margin-top: 25px;
+            display: block;
+            font-size: 0.75rem;
+            color: #666;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-gold);
+        }
+
+        /* Error Messages */
+        .error-msg {
+            background: rgba(217, 83, 79, 0.1);
+            color: #d9534f;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            border: 1px solid rgba(217, 83, 79, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="logo-area">
+        <h2>MAXDEL</h2>
+        <div class="logo-divider"></div>
+    </div>
+
+    <div class="login-box">
+        <h3>Secure Administrator Access</h3>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error-msg">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>Username</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="username" placeholder="Enter your ID" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Access Key</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">Authorize Entry</button>
+        </form>
+
+        <a href="{% url 'home' %}" class="footer-link">
+            <i class="fas fa-arrow-left"></i> Return to Public Site
+        </a>
+    </div>
+
+    <p style="text-align: center; margin-top: 30px; font-size: 0.6rem; color: #444; letter-spacing: 2px; text-transform: uppercase;">
+        Authorized Personnel Only
+    </p>
+</div>
+
+</body>
+</html>

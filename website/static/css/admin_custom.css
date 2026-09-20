@@ -1,0 +1,419 @@
+/* MAXDEL HOTEL - Professional Dark Theme for Django Admin */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-main: #0c0d12;
+  --bg-surface: #14161f;
+  --bg-card: #1c1e2a;
+  --bg-input: #232638;
+  --primary-gold: #d4af37;
+  --primary-gold-hover: #e5be48;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border-subtle: #2a2d3d;
+  --border-focus: #d4af37;
+  --danger-red: #ef4444;
+  --success-green: #10b981;
+}
+
+/* Global Reset & Body */
+html, body {
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Base Header / Navbar */
+#header {
+  background: #08090d !important;
+  color: var(--text-main) !important;
+  padding: 18px 32px !important;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6) !important;
+  border-bottom: 2px solid var(--primary-gold) !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+#branding h1 {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 1.4rem !important;
+  letter-spacing: 2.5px !important;
+  font-weight: 700 !important;
+  color: var(--primary-gold) !important;
+  text-transform: uppercase !important;
+  margin: 0 !important;
+}
+
+#branding h1 a, #branding h1 a:link, #branding h1 a:visited {
+  color: var(--primary-gold) !important;
+  text-decoration: none !important;
+}
+
+#user-tools {
+  font-size: 0.8rem !important;
+  color: var(--text-muted) !important;
+  letter-spacing: 0.5px !important;
+}
+
+#user-tools a {
+  color: var(--primary-gold) !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease !important;
+}
+
+#user-tools a:hover {
+  color: #ffffff !important;
+}
+
+/* Navigation Sidebar */
+#nav-sidebar {
+  background: #090a0e !important;
+  border-right: 1px solid var(--border-subtle) !important;
+}
+
+#nav-sidebar .module th {
+  background: rgba(212, 175, 55, 0.08) !important;
+  color: var(--primary-gold) !important;
+  font-family: 'Playfair Display', serif !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 1.5px !important;
+  text-transform: uppercase !important;
+  padding: 12px 16px !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+#nav-sidebar td, #nav-sidebar th {
+  border-color: var(--border-subtle) !important;
+}
+
+#nav-sidebar a {
+  color: var(--text-muted) !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  padding: 10px 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+#nav-sidebar tr:hover a, #nav-sidebar td.current-model a {
+  color: var(--primary-gold) !important;
+  background: rgba(212, 175, 55, 0.12) !important;
+}
+
+/* Breadcrumbs Bar */
+div.breadcrumbs {
+  background: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  padding: 14px 32px !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  color: var(--text-muted) !important;
+}
+
+div.breadcrumbs a {
+  color: var(--primary-gold) !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+div.breadcrumbs a:hover {
+  color: #ffffff !important;
+}
+
+/* Content Area */
+#content {
+  background-color: var(--bg-main) !important;
+  padding: 32px !important;
+  color: var(--text-main) !important;
+}
+
+#content h1 {
+  font-family: 'Playfair Display', serif !important;
+  color: var(--text-main) !important;
+  font-size: 1.8rem !important;
+  margin-bottom: 24px !important;
+}
+
+/* Modules & Cards */
+.module {
+  background: var(--bg-card) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid var(--border-subtle) !important;
+  margin-bottom: 28px !important;
+  overflow: hidden !important;
+}
+
+.module h2, .module caption, .inline-group h2 {
+  background: var(--bg-surface) !important;
+  color: var(--primary-gold) !important;
+  font-family: 'Playfair Display', serif !important;
+  font-size: 0.95rem !important;
+  letter-spacing: 1.5px !important;
+  text-transform: uppercase !important;
+  padding: 16px 24px !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+/* Buttons & Submits */
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+  background: var(--bg-surface) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 8px !important;
+  padding: 10px 24px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.5px !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+  background: var(--primary-gold) !important;
+  color: #0c0d12 !important;
+  border: none !important;
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover, a.button:hover {
+  background: var(--primary-gold-hover) !important;
+  color: #0c0d12 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35) !important;
+}
+
+.button.deletelink, a.deletelink {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: var(--danger-red) !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+}
+
+.button.deletelink:hover, a.deletelink:hover {
+  background: var(--danger-red) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35) !important;
+}
+
+/* Changelist Table */
+#changelist {
+  background: transparent !important;
+}
+
+#changelist #changelist-form .actions {
+  background: var(--bg-surface) !important;
+  padding: 16px 24px !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  color: var(--text-muted) !important;
+}
+
+#changelist-filter {
+  background: var(--bg-card) !important;
+  border-left: 1px solid var(--border-subtle) !important;
+  border-radius: 0 12px 12px 0 !important;
+}
+
+#changelist-filter h2 {
+  background: var(--bg-surface) !important;
+  color: var(--primary-gold) !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 1.5px !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+#changelist-filter h3 {
+  color: var(--text-muted) !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+}
+
+#changelist-filter a {
+  color: var(--text-muted) !important;
+  font-size: 0.8rem !important;
+}
+
+#changelist-filter li.selected a {
+  color: var(--primary-gold) !important;
+  font-weight: 700 !important;
+}
+
+#changelist table {
+  width: 100% !important;
+  background: var(--bg-card) !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+#changelist table thead th {
+  background: var(--bg-surface) !important;
+  color: var(--text-muted) !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  padding: 16px 20px !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+#changelist table tbody td, #changelist table tbody th {
+  padding: 16px 20px !important;
+  font-size: 0.85rem !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  color: var(--text-main) !important;
+}
+
+#changelist table tbody tr {
+  transition: background-color 0.2s ease !important;
+}
+
+#changelist table tbody tr:hover {
+  background-color: rgba(212, 175, 55, 0.06) !important;
+}
+
+#changelist table tbody th a {
+  color: var(--primary-gold) !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+#changelist table tbody th a:hover {
+  color: #ffffff !important;
+}
+
+/* Forms, Fieldsets & Inputs */
+fieldset {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 12px !important;
+  margin-bottom: 24px !important;
+}
+
+.form-row {
+  padding: 18px 24px !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  background: transparent !important;
+}
+
+.form-row label {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  color: var(--text-muted) !important;
+}
+
+input[type=text], input[type=password], input[type=email], input[type=url], input[type=number], input[type=tel], textarea, select {
+  background-color: var(--bg-input) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-size: 0.85rem !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+}
+
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=number]:focus, textarea:focus, select:focus {
+  border-color: var(--primary-gold) !important;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2) !important;
+  background-color: #272a3e !important;
+}
+
+/* Pagination */
+.paginator {
+  background: var(--bg-surface) !important;
+  color: var(--text-muted) !important;
+  border-top: 1px solid var(--border-subtle) !important;
+  padding: 14px 24px !important;
+  font-size: 0.8rem !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+.paginator a:link, .paginator a:visited {
+  background: var(--bg-card) !important;
+  color: var(--primary-gold) !important;
+  border: 1px solid var(--border-subtle) !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  text-decoration: none !important;
+}
+
+.paginator a:hover {
+  background: var(--primary-gold) !important;
+  color: #0c0d12 !important;
+}
+
+/* Login Page Styling */
+body.login {
+  background: var(--bg-main) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 100vh !important;
+}
+
+body.login #container {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+  width: 100% !important;
+  max-width: 420px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+body.login #header {
+  text-align: center !important;
+  justify-content: center !important;
+  background: var(--bg-surface) !important;
+  padding: 24px !important;
+}
+
+body.login #content-main {
+  padding: 32px !important;
+}
+
+body.login .form-row {
+  border: none !important;
+  padding: 12px 0 !important;
+}
+
+body.login .submit-row {
+  background: transparent !important;
+  border: none !important;
+  padding: 20px 0 0 0 !important;
+  text-align: center !important;
+}
+
+body.login .submit-row input {
+  width: 100% !important;
+  padding: 14px !important;
+  font-size: 0.85rem !important;
+}
+
+/* Success / Error Messages */
+ul.messagelist li {
+  border-radius: 8px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  padding: 12px 20px !important;
+  margin-bottom: 20px !important;
+}
+
+ul.messagelist li.success {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: var(--success-green) !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+ul.messagelist li.error {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: var(--danger-red) !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+}

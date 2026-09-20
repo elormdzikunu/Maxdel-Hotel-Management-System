@@ -1,0 +1,398 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Management Console | MAXDEL HOTEL</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --primary-gold: #c5a059;
+      --dark-onyx: #1a1a1a;
+      --sidebar-bg: #111111;
+      --bg-light: #f8f9fa;
+      --accent-red: #d9534f;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Montserrat', sans-serif; background: var(--bg-light); color: #333; }
+
+    .container { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      color: #fff;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+    }
+
+    .logo-area { text-align: center; margin-bottom: 40px; }
+    .logo-area h2 { font-family: 'Playfair Display', serif; letter-spacing: 3px; font-size: 1.5rem; }
+    .logo-area div { width: 30px; height: 2px; background: var(--primary-gold); margin: 10px auto; }
+
+    .sidebar ul { list-style: none; flex: 1; }
+    .sidebar ul li { margin-bottom: 8px; }
+    
+    .sidebar a {
+      color: #aaa;
+      text-decoration: none;
+      padding: 12px 15px;
+      display: flex;
+      align-items: center;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: 0.3s;
+    }
+
+    .sidebar a i { margin-right: 15px; width: 20px; text-align: center; }
+    
+    .sidebar li.active a, .sidebar a:hover {
+      background: rgba(197, 160, 89, 0.1);
+      color: var(--primary-gold);
+    }
+
+    .logout-box { border-top: 1px solid #222; padding-top: 20px; }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid var(--accent-red);
+      padding: 12px;
+      border-radius: 4px;
+      color: var(--accent-red);
+      text-align: center;
+      text-decoration: none;
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    .logout-btn:hover { background: var(--accent-red); color: white; }
+
+    /* MAIN CONTENT */
+    .main { flex: 1; margin-left: 260px; padding: 40px; }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .top-nav h2 { font-family: 'Playfair Display', serif; font-size: 2rem; }
+    .top-nav p { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
+
+    .search-bar {
+      background: #fff;
+      border: 1px solid #eee;
+      padding: 10px 20px;
+      border-radius: 30px;
+      width: 300px;
+      display: flex;
+      align-items: center;
+    }
+    .search-bar input { border: none; outline: none; margin-left: 10px; width: 100%; font-size: 0.8rem; }
+
+    /* METRIC CARDS */
+    .section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: #999; margin-bottom: 20px; display: block; }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card h6 { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .card h3 { font-size: 1.6rem; color: var(--dark-onyx); }
+    .card .icon-bg {
+      position: absolute;
+      right: -10px;
+      bottom: -10px;
+      font-size: 4rem;
+      color: rgba(197, 160, 89, 0.05);
+    }
+
+    /* TABLE */
+    .glass-panel {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      margin-bottom: 30px;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th { text-align: left; font-size: 0.75rem; text-transform: uppercase; color: #999; padding: 15px; border-bottom: 1px solid #eee; }
+    td { padding: 18px 15px; border-bottom: 1px solid #f9f9f9; font-size: 0.9rem; }
+    .guest-name { font-weight: 600; color: var(--dark-onyx); }
+    .room-badge { background: #f0f0f0; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+
+    /* DASHBOARD BUTTONS */
+    .action-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 40px; }
+    .action-link {
+      background: white;
+      text-decoration: none;
+      color: var(--dark-onyx);
+      padding: 20px;
+      text-align: center;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: 0.3s;
+      border: 1px solid transparent;
+    }
+    .action-link:hover { border-color: var(--primary-gold); color: var(--primary-gold); transform: translateY(-3px); }
+    .action-link i { font-size: 1.5rem; margin-bottom: 10px; display: block; }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="sidebar">
+    <div class="logo-area">
+      <h2>MAXDEL</h2>
+      <div></div>
+      <p style="font-size: 0.6rem; letter-spacing: 2px; color: var(--primary-gold);">MANAGEMENT</p>
+    </div>
+
+    <ul>
+      <li class="active"><a href="#"><i class="fas fa-chart-pie"></i> Overview</a></li>
+      <li><a href="/secure-md/rooms"><i class="fas fa-door-open"></i> Inventory</a></li>
+      <li><a href="/secure-md/guest-history/"><i class="fas fa-user-friends"></i> Guests</a></li>
+      <li><a href="/secure-md/report/monthly/"><i class="fas fa-file-invoice-dollar"></i> Reports</a></li>
+      <li><a href="/secure-md/report/yearly/"><i class="fas fa-analytics"></i> Analytics</a></li>
+    </ul>
+
+    <div class="logout-box">
+      <a href="/" class="logout-btn">SECURE LOGOUT</a>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="top-nav">
+      <div>
+        <h2>Dashboard Overview</h2>
+        <p>System Status: <span style="color: #28a745;">● Operational</span> | Welcome, {{ user.username }}</p>
+      </div>
+      <div class="search-bar">
+        <i class="fas fa-search" style="color: #ccc;"></i>
+        <input type="text" placeholder="Search guests, rooms, or transactions...">
+      </div>
+    </div>
+
+    {% if messages %}
+    <div style="margin-bottom: 20px;">
+      {% for message in messages %}
+      <div style="padding: 15px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; font-weight: 600; {% if message.tags == 'error' %}background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% else %}background: #d4edda; color: #155724; border: 1px solid #c3e6cb;{% endif %}">
+        <i class="fas {% if message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}" style="margin-right: 8px;"></i>
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- HOTEL SETTINGS & ROOM PRICING CONTROL -->
+    <div class="glass-panel" style="border-top: 4px solid var(--primary-gold);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+        <div>
+          <span class="section-title" style="margin-bottom: 5px;">Manager Settings & Pricing Control</span>
+          <p style="font-size: 0.8rem; color: #666;">Configure global booking deposit percentages and manage nightly room costs.</p>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+        <!-- DEPOSIT PERCENTAGE FORM -->
+        <div style="background: #fafafa; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+          <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--dark-onyx); margin-bottom: 15px;">
+            <i class="fas fa-percentage" style="color: var(--primary-gold); margin-right: 8px;"></i> Online Booking Deposit Percentage
+          </h4>
+          <form method="POST" action="{% url 'update_settings' %}">
+            {% csrf_token %}
+            <div style="margin-bottom: 15px;">
+              <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #777; margin-bottom: 6px;">
+                Required Deposit Percentage (%)
+              </label>
+              <div style="display: flex; align-items: center;">
+                <input type="number" step="0.5" min="0" max="100" name="deposit_percentage" value="{{ hotel_settings.deposit_percentage }}" 
+                       style="padding: 10px 14px; border: 1px solid #ccc; border-radius: 6px 0 0 6px; width: 100%; outline: none; font-size: 0.9rem;" required>
+                <span style="background: #eee; padding: 10px 14px; border: 1px solid #ccc; border-left: none; border-radius: 0 6px 6px 0; font-weight: 700; color: #555;">%</span>
+              </div>
+              <p style="font-size: 0.7rem; color: #888; margin-top: 6px;">Guests booking online will be charged this percentage of their total room bill as a deposit.</p>
+            </div>
+            <button type="submit" style="background: var(--primary-gold); color: white; border: none; padding: 10px 18px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.3s;">
+              <i class="fas fa-save" style="margin-right: 6px;"></i> Save Deposit Setting
+            </button>
+          </form>
+        </div>
+
+        <!-- QUICK ROOM PRICE UPDATE -->
+        <div style="background: #fafafa; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+          <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--dark-onyx); margin-bottom: 15px;">
+            <i class="fas fa-tags" style="color: var(--primary-gold); margin-right: 8px;"></i> Quick Room Pricing
+          </h4>
+          <div style="max-height: 220px; overflow-y: auto; padding-right: 5px;">
+            {% for room in rooms_list %}
+            <form method="POST" action="{% url 'edit_room_price' %}" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+              {% csrf_token %}
+              <input type="hidden" name="room_id" value="{{ room.id }}">
+              <input type="hidden" name="next" value="md_dashboard">
+              <div>
+                <strong style="font-size: 0.85rem;">Room {{ room.room_number }}</strong>
+                <span style="font-size: 0.75rem; color: #777; margin-left: 5px;">({{ room.room_type }})</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 0.75rem; font-weight: 700; color: #555;">GH₵</span>
+                <input type="number" step="0.01" min="0" name="price" value="{{ room.price_per_night }}" 
+                       style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; width: 90px; font-size: 0.8rem;" required>
+                <button type="submit" style="background: #333; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600;">
+                  Update
+                </button>
+              </div>
+            </form>
+            {% empty %}
+            <p style="font-size: 0.8rem; color: #888;">No rooms registered yet.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <span class="section-title">Navigation</span>
+    <div class="action-grid">
+      <a href="/secure-md/rooms" class="action-link"><i class="fas fa-bed"></i>Rooms</a>
+      <a href="/secure-md/guest-history/" class="action-link"><i class="fas fa-users"></i>Guests</a>
+      <a href="/secure-md/reports/?type=daily" class="action-link"><i class="fas fa-clock"></i>Daily</a>
+      <a href="/secure-md/report/monthly/" class="action-link"><i class="fas fa-calendar-alt"></i>Monthly</a>
+      <a href="/secure-md/report/yearly/" class="action-link"><i class="fas fa-chart-line"></i>Yearly</a>
+    </div>
+
+    <span class="section-title">Live Occupancy</span>
+    <div class="stats-grid">
+      <div class="card">
+        <h6>Available Rooms</h6>
+        <h3>{{ available_rooms }}</h3>
+        <i class="fas fa-check-circle icon-bg"></i>
+      </div>
+      <div class="card">
+        <h6>Occupied</h6>
+        <h3>{{ occupied_rooms|default:"0" }}</h3>
+        <i class="fas fa-user-check icon-bg"></i>
+      </div>
+      <div class="card">
+        <h6>Total Bookings</h6>
+        <h3>{{ total_bookings }}</h3>
+        <i class="fas fa-calendar-check icon-bg"></i>
+      </div>
+    </div>
+
+    <span class="section-title">Revenue (GHS)</span>
+    <div class="stats-grid">
+      <div class="card" style="border-left: 4px solid var(--primary-gold);">
+        <h6>Daily</h6>
+        <h3>{{ daily_revenue|default:"0" }}</h3>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--primary-gold);">
+        <h6>Weekly</h6>
+        <h3>{{ weekly_revenue|default:"0" }}</h3>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--primary-gold);">
+        <h6>Monthly</h6>
+        <h3>{{ monthly_revenue|default:"0" }}</h3>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="glass-panel">
+          <span class="section-title">Revenue Performance</span>
+          <canvas id="revenueChart" height="100"></canvas>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="glass-panel">
+          <span class="section-title">Latest Arrivals</span>
+          <table>
+            <thead>
+              <tr>
+                <th>Guest Information</th>
+                <th>Room Details</th>
+                <th>Schedule</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for booking in bookings|slice:":5" %}
+              <tr>
+                <td>
+                  <div class="guest-name">{{ booking.guest_name }}</div>
+                  <div style="font-size: 0.75rem; color: #999;">{{ booking.guest_phone }}</div>
+                </td>
+                <td>
+                  <span class="room-badge">Room {{ booking.room.room_number }}</span>
+                  <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">{{ booking.room.room_type }}</div>
+                </td>
+                <td>
+                  <div style="font-size: 0.8rem;">In: {{ booking.check_in }}</div>
+                  <div style="font-size: 0.8rem; color: #999;">Out: {{ booking.check_out }}</div>
+                </td>
+                <td><span style="color: var(--primary-gold); font-weight: 700; font-size: 0.7rem;">CONFIRMED</span></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4" style="text-align:center; color: #999;">No active reservations.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ctx = document.getElementById("revenueChart");
+  new Chart(ctx, {
+    type: "line", // Changed to line for a more premium look
+    data: {
+      labels: ["Daily", "Weekly", "Monthly"],
+      datasets: [{
+        label: "Revenue (GH₵)",
+        data: [{{ daily_revenue|default:0 }}, {{ weekly_revenue|default:0 }}, {{ monthly_revenue|default:0 }}],
+        borderColor: "#c5a059",
+        backgroundColor: "rgba(197, 160, 89, 0.1)",
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { display: false } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

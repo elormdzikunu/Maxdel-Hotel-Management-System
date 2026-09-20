@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}MAXDEL HOTEL | Luxury & Comfort{% endblock %}
+
+{% block extra_css %}
+<style>
+  body { padding-top: 0 !important; }
+  .hero { 
+    background: linear-gradient(180deg, rgba(15, 16, 21, 0.5) 0%, rgba(15, 16, 21, 0.7) 100%), url("{% static 'img/main_banner.JPG' %}") no-repeat center center/cover; 
+    height: 100vh; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    color: #fff; 
+    text-align: center;
+    position: relative;
+  }
+
+  .hero h1 { 
+    font-size: clamp(3.2rem, 7.5vw, 5.8rem); 
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    animation: fadeInDown 1.2s ease-out;
+  }
+
+  .discovery-bar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 2.2rem 2.5rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    margin-top: -65px;
+    position: relative;
+    z-index: 10;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.8);
+  }
+
+  .discovery-item {
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    color: var(--dark-onyx);
+    padding: 10px;
+    border-radius: 12px;
+  }
+  .discovery-item:hover {
+    transform: translateY(-8px);
+    color: var(--primary-gold);
+    background: rgba(197, 160, 89, 0.05);
+  }
+
+  @media (min-width: 768px) {
+    .border-end-md { border-right: 1px solid #f0f0f0; }
+  }
+
+  .about-parallax {
+    position: relative;
+    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url("{% static 'img/About.JPG' %}");
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+    padding: 160px 0;
+    margin-top: 100px;
+  }
+
+  .about-card {
+    background: rgba(255, 255, 255, 0.98);
+    padding: 4.5rem 4rem;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    border-left: 6px solid var(--primary-gold);
+    transition: transform 0.4s ease;
+  }
+  .about-card:hover { transform: translateY(-5px); }
+  .about-card h2 { font-size: 2.8rem; margin-bottom: 1.5rem; color: var(--dark-onyx); }
+  .section-padding { padding: 110px 0; }
+  
+  .section-title { text-align: center; margin-bottom: 60px; }
+  .section-title h2 { font-size: 3rem; position: relative; display: inline-block; padding-bottom: 15px; }
+  .section-title h2::after {
+    content: "";
+    position: absolute;
+    width: 60px;
+    height: 3px;
+    background: var(--primary-gold);
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero" id="home">
+  <div>
+    <p class="text-uppercase mb-3" style="letter-spacing: 8px; font-weight: 300;">Experience Ghana</p>
+    <h1 class="fw-bold">Maxdel Hotel</h1>
+    <p class="fs-4 fst-italic" style="font-family: 'Playfair Display', serif;">Where our woezor means comfort</p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="discovery-bar">
+    <div class="row text-center align-items-center g-4">
+      <div class="col-6 col-md-3 border-end-md">
+        <a href="{% url 'public_rooms' %}" class="text-decoration-none discovery-item d-block">
+          <i class="bi bi-door-open fs-2 mb-2 d-block" style="color: var(--primary-gold);"></i>
+          <h6 class="text-uppercase fw-bold mb-1 small" style="letter-spacing: 2px;">Accommodation</h6>
+          <span class="text-muted" style="font-size: 0.7rem;">Luxury Suites</span>
+        </a>
+      </div>
+      <div class="col-6 col-md-3 border-end-md">
+        <a href="#" class="text-decoration-none discovery-item d-block">
+          <i class="bi bi-cup-hot fs-2 mb-2 d-block" style="color: var(--primary-gold);"></i>
+          <h6 class="text-uppercase fw-bold mb-1 small" style="letter-spacing: 2px;">Fine Dining</h6>
+          <span class="text-muted" style="font-size: 0.7rem;">Local & International</span>
+        </a>
+      </div>
+      <div class="col-6 col-md-3 border-end-md">
+        <a href="#" class="text-decoration-none discovery-item d-block">
+          <i class="bi bi-calendar-event fs-2 mb-2 d-block" style="color: var(--primary-gold);"></i>
+          <h6 class="text-uppercase fw-bold mb-1 small" style="letter-spacing: 2px;">Conferencing</h6>
+          <span class="text-muted" style="font-size: 0.7rem;">Meeting Spaces</span>
+        </a>
+      </div>
+      <div class="col-6 col-md-3">
+        <a href="#" class="text-decoration-none discovery-item d-block">
+          <i class="bi bi-water fs-2 mb-2 d-block" style="color: var(--primary-gold);"></i>
+          <h6 class="text-uppercase fw-bold mb-1 small" style="letter-spacing: 2px;">Wellness</h6>
+          <span class="text-muted" style="font-size: 0.7rem;">Relax & Recharge</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="about-parallax" id="about">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 offset-lg-1">
+        <div class="about-card">
+          <span class="text-uppercase fw-bold mb-2 d-block" style="color: var(--primary-gold); letter-spacing: 3px;">Since 1999</span>
+          <h2>VISION AND MISSION</h2>
+          <p class="lead text-muted mb-4">Akwaaba to Ghana's prestigious Indigenous Hotels group.</p>
+          <p class="text-muted">We have proven to be a trusted brand offering maximum comfort at each of our uniquely designed locations. At MAXDEL HOTEL, we strive for excellence and offer world-class services to our cherished guests.</p>
+          <hr class="my-4">
+          <a href="{% url 'About' %}" class="btn btn-link text-decoration-none p-0 fw-bold" style="color: var(--primary-gold);">EXPLORE OUR HERITAGE &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-padding bg-white" id="contact">
+  <div class="container">
+    <div class="section-title">
+      <h2>Get In Touch</h2>
+      <p class="text-muted mt-3">We are here to assist with your inquiries and bookings.</p>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <form class="row g-4">
+          <div class="col-md-6">
+            <input type="text" class="form-control p-4 border-0 bg-light" placeholder="Your Full Name">
+          </div>
+          <div class="col-md-6">
+            <input type="email" class="form-control p-4 border-0 bg-light" placeholder="Email Address">
+          </div>
+          <div class="col-12">
+            <textarea class="form-control p-4 border-0 bg-light" rows="5" placeholder="How can we help you?"></textarea>
+          </div>
+          <div class="col-12 text-center">
+            <button type="submit" class="btn btn-gold px-5 py-3 mt-3">Send Message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

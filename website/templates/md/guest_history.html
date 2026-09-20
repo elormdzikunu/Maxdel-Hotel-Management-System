@@ -1,0 +1,147 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Guest History | MAXDEL HOTEL{% endblock %}
+{% block role_title %}MANAGEMENT{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-card {
+        background: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        margin-bottom: 30px;
+    }
+    .search-form { display: flex; gap: 15px; }
+    .search-form input {
+        flex: 1;
+        padding: 14px 20px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        outline: none;
+        transition: 0.3s;
+    }
+    .search-form input:focus { border-color: var(--primary-gold); }
+    .btn-search {
+        background: var(--dark-onyx);
+        color: white;
+        border: none;
+        padding: 0 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn-search:hover { background: var(--primary-gold); }
+
+    .table-panel {
+        background: #fff;
+        padding: 0;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+        background: #fdfdfd;
+        text-align: left;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+    }
+    td { padding: 20px; border-bottom: 1px solid #f9f9f9; font-size: 0.85rem; vertical-align: middle; }
+    
+    .guest-main { font-weight: 600; color: var(--dark-onyx); display: block; }
+    .guest-sub { font-size: 0.75rem; color: #999; }
+    
+    .badge {
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .badge-active { background: rgba(40, 167, 69, 0.1); color: var(--success-green); }
+    .badge-checkout { background: rgba(108, 117, 125, 0.1); color: #6c757d; }
+
+    .price-text { font-weight: 600; color: var(--dark-onyx); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="top-nav">
+    <div>
+        <a href="{% url 'md_dashboard' %}" style="text-decoration:none; font-size:0.8rem; color:var(--primary-gold); font-weight:600;">
+            <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
+        </a>
+        <h2 style="margin-top:10px;">Guest History</h2>
+    </div>
+</div>
+
+<div class="search-card">
+    <form method="get" class="search-form">
+        <input type="text" name="guest" placeholder="Search by guest name, phone, or room..." value="{{ search_query }}">
+        <button type="submit" class="btn-search">SEARCH ARCHIVE</button>
+    </form>
+</div>
+
+<div class="table-panel">
+    <table>
+        <thead>
+            <tr>
+                <th>Guest Identity</th>
+                <th>Accommodation</th>
+                <th>Stay Period</th>
+                <th>Rate</th>
+                <th>Status</th>
+                <th>Booking Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>
+                    <span class="guest-main">{{ booking.guest_name }}</span>
+                    <span class="guest-sub">{{ booking.guest_phone }}</span>
+                </td>
+                <td>
+                    <span style="font-weight:600;">Room {{ booking.room.room_number }}</span>
+                    <div class="guest-sub">{{ booking.room.room_type }}</div>
+                </td>
+                <td>
+                    <div style="font-size:0.8rem;">{{ booking.check_in }} — {{ booking.check_out }}</div>
+                </td>
+                <td>
+                    <span class="price-text">GH₵{{ booking.room.price_per_night }}</span>
+                </td>
+                <td>
+                    {% if booking.checked_out %}
+                        <span class="badge badge-checkout">Checked Out</span>
+                    {% else %}
+                        <span class="badge badge-active">Active</span>
+                    {% endif %}
+                </td>
+                <td class="guest-sub">
+                    {{ booking.created_at|date:"M d, Y" }}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align:center; padding: 50px; color: #999;">
+                    {% if search_query %}
+                        No records found for "{{ search_query }}".
+                    {% else %}
+                        No guest history available yet.
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

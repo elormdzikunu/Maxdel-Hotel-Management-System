@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Receipt #{{ booking.id }} | MAXDEL HOTEL</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-gold: #c5a059;
+      --dark-onyx: #1a1a1a;
+      --bg-light: #f9f9f9;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Montserrat', sans-serif; background: var(--bg-light); color: #333; padding: 40px 20px; }
+    
+    .invoice-card {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 50px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      border-top: 6px solid var(--primary-gold);
+    }
+    
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 30px;
+      margin-bottom: 30px;
+    }
+    
+    .brand h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; letter-spacing: 3px; color: var(--dark-onyx); }
+    .brand p { font-size: 0.8rem; color: var(--primary-gold); letter-spacing: 2px; text-transform: uppercase; margin-top: 5px; }
+    
+    .meta { text-align: right; }
+    .meta h3 { font-size: 1.2rem; color: #555; font-weight: 700; }
+    .meta p { font-size: 0.8rem; color: #888; margin-top: 4px; }
+    
+    .status-pill {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-top: 10px;
+    }
+    .status-paid { background: #d4edda; color: #155724; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    .box h4 { font-size: 0.75rem; text-transform: uppercase; color: #aaa; letter-spacing: 1.5px; margin-bottom: 10px; }
+    .box p { font-size: 0.95rem; color: #333; line-height: 1.6; }
+    
+    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+    th { text-align: left; background: #fafafa; padding: 14px; font-size: 0.75rem; text-transform: uppercase; color: #777; border-bottom: 1px solid #eee; }
+    td { padding: 16px 14px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+    
+    .summary-box {
+      float: right;
+      width: 320px;
+      margin-bottom: 30px;
+    }
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .summary-line.total {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark-onyx);
+      border-bottom: 2px solid var(--primary-gold);
+    }
+    .summary-line.due {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #d9534f;
+    }
+    
+    .clear { clear: both; }
+    
+    .no-print {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: 0.3s;
+    }
+    .btn-print { background: var(--dark-onyx); color: white; }
+    .btn-print:hover { background: var(--primary-gold); }
+    .btn-back { background: #eee; color: #333; }
+    .btn-back:hover { background: #ddd; }
+    
+    @media print {
+      body { background: white; padding: 0; }
+      .invoice-card { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 20px; }
+      .no-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="no-print">
+    <button onclick="window.print()" class="btn btn-print"><i class="fas fa-print" style="margin-right: 8px;"></i> Print / Save as PDF</button>
+    <a href="javascript:history.back()" class="btn btn-back"><i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Back</a>
+  </div>
+
+  <div class="invoice-card">
+    <div class="invoice-header">
+      <div class="brand">
+        <h1>MAXDEL HOTEL</h1>
+        <p>Boutique Hotel & Suites</p>
+      </div>
+      <div class="meta">
+        <h3>INVOICE / RECEIPT</h3>
+        <p><strong>Ref #:</strong> {{ booking.payment_reference|default:booking.id }}</p>
+        <p><strong>Date:</strong> {{ booking.created_at|date:"M d, Y H:i" }}</p>
+        <span class="status-pill {% if booking.payment_status == 'paid' %}status-paid{% else %}status-pending{% endif %}">
+          {{ booking.get_payment_status_display }}
+        </span>
+      </div>
+    </div>
+
+    <div class="details-grid">
+      <div class="box">
+        <h4>Guest Information</h4>
+        <p><strong>{{ booking.guest_name }}</strong></p>
+        <p><i class="fas fa-phone" style="font-size: 0.75rem; color: #888;"></i> {{ booking.guest_phone }}</p>
+        {% if booking.guest_email %}<p><i class="fas fa-envelope" style="font-size: 0.75rem; color: #888;"></i> {{ booking.guest_email }}</p>{% endif %}
+      </div>
+      <div class="box">
+        <h4>Stay Reservation</h4>
+        <p><strong>Room {{ booking.room.room_number }}</strong> ({{ booking.room.room_type }})</p>
+        <p><strong>Check-In:</strong> {{ booking.check_in }}</p>
+        <p><strong>Check-Out:</strong> {{ booking.check_out }} ({{ nights }} Night{{ nights|pluralize }})</p>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Rate / Night</th>
+          <th>Duration</th>
+          <th style="text-align: right;">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Accommodation - Room {{ booking.room.room_number }} ({{ booking.room.room_type }})</td>
+          <td>GH₵ {{ booking.room.price_per_night }}</td>
+          <td>{{ nights }} Night{{ nights|pluralize }}</td>
+          <td style="text-align: right; font-weight: 600;">GH₵ {{ booking.total_amount }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="summary-box">
+      <div class="summary-line total">
+        <span>Total Bill</span>
+        <span>GH₵ {{ booking.total_amount }}</span>
+      </div>
+      <div class="summary-line">
+        <span>Amount Paid / Deposit</span>
+        <span>GH₵ {{ booking.amount_paid|default:booking.deposit_amount }}</span>
+      </div>
+      <div class="summary-line due">
+        <span>Balance Due</span>
+        <span>GH₵ {{ booking.balance_due }}</span>
+      </div>
+    </div>
+    <div class="clear"></div>
+
+    <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: center; color: #999; font-size: 0.75rem;">
+      <p>Thank you for choosing Maxdel Hotel & Suites! We wish you a peaceful stay.</p>
+    </div>
+  </div>
+
+</body>
+</html>

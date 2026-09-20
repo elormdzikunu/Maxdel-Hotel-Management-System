@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Our Suites | MAXDEL HOTEL{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-header {
+    text-align: center;
+    padding: 90px 0;
+    background-color: white;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .page-header h1 {
+    font-size: 3.6rem;
+    font-weight: 700;
+    color: var(--dark-onyx);
+  }
+
+  /* Room Cards */
+  .room-row {
+    margin-bottom: 70px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.06);
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+  }
+  .room-row:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.1);
+  }
+
+  .room-img-container {
+    overflow: hidden;
+    height: 100%;
+    min-height: 480px;
+  }
+
+  .room-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+  }
+
+  .room-row:hover .room-img { transform: scale(1.04); }
+
+  .room-details {
+    padding: 4rem 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .room-type-label {
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 3.5px;
+    color: var(--primary-gold);
+    font-size: 0.75rem;
+    margin-bottom: 15px;
+    display: block;
+  }
+
+  .room-price {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--dark-onyx);
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 15px;
+  }
+
+  .room-price span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 25px 0;
+    padding: 20px 0;
+    border-top: 1px solid #f4f4f5;
+    border-bottom: 1px solid #f4f4f5;
+  }
+
+  .feature-item {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #52525b;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .feature-item i {
+    color: var(--primary-gold);
+    margin-right: 12px;
+    font-size: 1.15rem;
+  }
+
+  @media (max-width: 768px) {
+    .room-details { padding: 2.5rem 1.8rem; }
+    .room-img-container { min-height: 280px; }
+    .page-header h1 { font-size: 2.6rem; }
+  }
+
+  @media (min-width: 768px) {
+    .flex-row-reverse-md { flex-direction: row-reverse !important; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="page-header">
+  <div class="container">
+    <span class="text-uppercase fw-bold mb-2 d-block" style="color: var(--primary-gold); letter-spacing: 3px;">Luxury Stays</span>
+    <h1>Our Suites & Rooms</h1>
+  </div>
+</header>
+
+<div class="container py-5">
+  
+  <div class="row room-row g-0 align-items-stretch" id="presidential">
+    <div class="col-md-7">
+      <div class="room-img-container">
+        <img src="{% static 'img/bedroom/bedroom (1).JPG' %}" class="room-img" alt="Presidential Suite">
+      </div>
+    </div>
+    <div class="col-md-5">
+      <div class="room-details">
+        <span class="room-type-label">The Peak of Luxury</span>
+        <h2>Presidential Suite</h2>
+        <div class="room-price">GH₵{{ presidential_price }} <span>/ night</span></div>
+        <p class="text-muted small mb-0">Our crown jewel. Spanning the highest floors with unmatched city views, private butler service, and an expansive living area for total exclusivity.</p>
+        <div class="features-grid">
+          <div class="feature-item"><i class="bi bi-water"></i> Jacuzzi</div>
+          <div class="feature-item"><i class="bi bi-person-workspace"></i> Butler</div>
+          <div class="feature-item"><i class="bi bi-eye"></i> Views</div>
+          <div class="feature-item"><i class="bi bi-door-open"></i> Balcony</div>
+        </div>
+        <a href="{% url 'booking' %}" class="btn btn-gold w-100">Book Now</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row room-row g-0 align-items-stretch flex-row-reverse-md" id="executive">
+    <div class="col-md-7">
+      <div class="room-img-container">
+        <img src="{% static 'img/bedroom/bedroom (7).JPG' %}" class="room-img" alt="Executive Suite">
+      </div>
+    </div>
+    <div class="col-md-5">
+      <div class="room-details">
+        <span class="room-type-label">Business Refined</span>
+        <h2>Executive Suite</h2>
+        <div class="room-price">GH₵{{ executive_price }} <span>/ night</span></div>
+        <p class="text-muted small mb-0">Crafted for productivity and rest. Includes a dedicated workstation, high-speed fiber internet, and a private lounge area.</p>
+        <div class="features-grid">
+          <div class="feature-item"><i class="bi bi-laptop"></i> Office</div>
+          <div class="feature-item"><i class="bi bi-cup-hot"></i> Mini Bar</div>
+          <div class="feature-item"><i class="bi bi-wifi"></i> Fiber-WiFi</div>
+          <div class="feature-item"><i class="bi bi-tv"></i> Smart TV</div>
+        </div>
+        <a href="{% url 'booking' %}" class="btn btn-gold w-100">Book Now</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row room-row g-0 align-items-stretch" id="deluxe">
+    <div class="col-md-7">
+      <div class="room-img-container">
+        <img src="{% static 'img/bedroom/bedroom (6).JPG' %}" class="room-img" alt="Deluxe Room">
+      </div>
+    </div>
+    <div class="col-md-5">
+      <div class="room-details">
+        <span class="room-type-label">Timeless Comfort</span>
+        <h2>Deluxe Room</h2>
+        <div class="room-price">GH₵{{ deluxe_price }} <span>/ night</span></div>
+        <p class="text-muted small mb-0">Warm tones and premium linens create an atmosphere of immediate relaxation. The perfect sanctuary after a long day in the city.</p>
+        <div class="features-grid">
+          <div class="feature-item"><i class="bi bi-snow"></i> Silent A/C</div>
+          <div class="feature-item"><i class="bi bi-safe"></i> Safe</div>
+          <div class="feature-item"><i class="bi bi-telephone"></i> 24h Desk</div>
+          <div class="feature-item"><i class="bi bi-droplet"></i> Ensuite</div>
+        </div>
+        <a href="{% url 'booking' %}" class="btn btn-gold w-100">Book Now</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

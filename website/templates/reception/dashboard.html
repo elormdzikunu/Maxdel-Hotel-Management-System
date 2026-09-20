@@ -1,0 +1,278 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Reception Console | MAXDEL HOTEL{% endblock %}
+{% block role_title %}RECEPTION DESK{% endblock %}
+
+{% block sidebar_nav %}
+<li class="active"><a href="{% url 'reception_dashboard' %}"><i class="fas fa-chart-pie"></i> Overview</a></li>
+<li><a href="{% url 'guest_history' %}"><i class="fas fa-user-friends"></i> Guests Archive</a></li>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+    .kpi-card {
+        background: white;
+        padding: 25px;
+        border-radius: 16px;
+        border: 1px solid rgba(0,0,0,0.03);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        transition: 0.3s;
+    }
+    .kpi-card:hover { transform: translateY(-5px); box-shadow: 0 12px 20px rgba(0,0,0,0.05); }
+    .kpi-label { font-size: 0.65rem; color: #999; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px; font-weight: 700; }
+    .kpi-value { font-size: 1.6rem; font-weight: 700; color: var(--dark-onyx); display: flex; align-items: baseline; gap: 8px; }
+
+    .table-section {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        margin-bottom: 40px;
+    }
+    .table-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 25px;
+    }
+    .table-header h2 { font-size: 1.1rem; font-weight: 600; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 15px 20px; font-size: 0.7rem; color: #bbb; text-transform: uppercase; letter-spacing: 1px; }
+    td { padding: 20px; border-bottom: 1px solid #f8f9fa; font-size: 0.85rem; }
+
+    .room-badge { background: var(--bg-light); padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; }
+
+    .btn-action {
+        background: transparent;
+        border: 1px solid #eee;
+        padding: 8px 16px;
+        border-radius: 8px;
+        color: var(--dark-onyx);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.75rem;
+        transition: 0.3s;
+    }
+    .btn-action:hover { background: var(--dark-onyx); color: white; border-color: var(--dark-onyx); }
+
+    @media (max-width: 1300px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="top-nav">
+    <div>
+        <h2>Reception Console</h2>
+        <p style="color: #666; font-size: 0.85rem; margin-top: 5px;">Welcome back, {{ user.username }}. Manage front-desk walk-ins, guest check-outs, and housekeeping.</p>
+    </div>
+    <div>
+        <button onclick="document.getElementById('walkinModal').style.display='block'" class="btn-action" style="background: var(--primary-gold); color: white; border: none; padding: 12px 24px; font-weight: 700; font-size: 0.85rem; cursor: pointer; border-radius: 8px;">
+            <i class="fas fa-plus" style="margin-right: 8px;"></i> New Walk-In Guest
+        </button>
+    </div>
+</header>
+
+<section class="kpi-grid">
+    <div class="kpi-card" style="border-left: 4px solid #2e7d32;">
+        <div class="kpi-label">Available Suites</div>
+        <div class="kpi-value">{{ available_rooms }}</div>
+    </div>
+    <div class="kpi-card" style="border-left: 4px solid var(--dark-onyx);">
+        <div class="kpi-label">Occupied Rooms</div>
+        <div class="kpi-value">{{ occupied_rooms }}</div>
+    </div>
+    <div class="kpi-card" style="border-left: 4px solid #d9534f;">
+        <div class="kpi-label">Needs Cleaning</div>
+        <div class="kpi-value">{{ cleaning_rooms }}</div>
+    </div>
+    <div class="kpi-card" style="border-left: 4px solid var(--primary-gold);">
+        <div class="kpi-label">Today's Revenue</div>
+        <div class="kpi-value" style="color: var(--primary-gold);">GH₵ {{ daily_revenue|floatformat:2 }}</div>
+    </div>
+</section>
+
+<!-- HOUSEKEEPING & ROOM STATUS BOARD -->
+<section class="table-section" style="border-top: 4px solid var(--primary-gold);">
+    <div class="table-header">
+        <div>
+            <h2>Housekeeping & Room Operational Board</h2>
+            <p style="font-size: 0.8rem; color: #777;">Quickly update room statuses (Available, Needs Cleaning, Under Maintenance)</p>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; margin-top: 15px;">
+        {% for room in all_rooms %}
+        <div style="background: #fafafa; border: 1px solid #eee; padding: 15px; border-radius: 10px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                    <strong style="font-size: 1.1rem; color: var(--dark-onyx);">Room {{ room.room_number }}</strong>
+                    <div style="font-size: 0.75rem; color: #777;">{{ room.room_type }} - GH₵{{ room.price_per_night }}/n</div>
+                </div>
+                <span style="font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; 
+                      {% if room.status == 'available' %}background: #d4edda; color: #155724;{% elif room.status == 'occupied' %}background: #e2e3e5; color: #383d41;{% elif room.status == 'cleaning' %}background: #fff3cd; color: #856404;{% else %}background: #f8d7da; color: #721c24;{% endif %}">
+                    {{ room.get_status_display }}
+                </span>
+            </div>
+
+            <form method="POST" action="{% url 'update_room_status' room.id %}" style="display: flex; gap: 5px; margin-top: 8px;">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="reception">
+                <select name="status" style="font-size: 0.75rem; padding: 6px; border-radius: 6px; border: 1px solid #ccc; flex-grow: 1;">
+                    {% for code, name in room.ROOM_STATUS %}
+                    <option value="{{ code }}" {% if room.status == code %}selected{% endif %}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" style="background: var(--dark-onyx); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                    Save
+                </button>
+            </form>
+        </div>
+        {% empty %}
+        <p style="font-size: 0.85rem; color: #999;">No rooms configured.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- ACTIVE RESERVATIONS TABLE -->
+<section class="table-section">
+    <div class="table-header">
+        <h2>Active Guests & Reservations</h2>
+        <div class="table-filters">
+            <form method="GET" style="display: flex; gap: 10px;">
+                <input type="text" name="search" value="{{ search_query }}" placeholder="Search guest name or room..." style="padding: 8px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.8rem;">
+                <button type="submit" class="btn-action">Search</button>
+            </form>
+        </div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Guest Information</th>
+                <th>Room Details</th>
+                <th>Check In / Out</th>
+                <th>Payment Details</th>
+                <th style="text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>
+                    <span style="font-weight: 600; color: var(--dark-onyx);">{{ booking.guest_name }}</span><br>
+                    <span style="font-size: 0.75rem; color: #888;"><i class="fas fa-phone" style="font-size: 0.65rem;"></i> {{ booking.guest_phone }}</span>
+                </td>
+                <td>
+                    <span class="room-badge">Room {{ booking.room.room_number }}</span> 
+                    <span style="font-size: 0.75rem; color: #666; margin-left: 5px;">{{ booking.room.room_type }}</span>
+                </td>
+                <td>
+                    <div style="font-size: 0.8rem;">
+                        <i class="fas fa-sign-in-alt" style="color: #2e7d32; font-size: 0.75rem;"></i> {{ booking.check_in }}<br>
+                        <i class="fas fa-sign-out-alt" style="color: #c62828; font-size: 0.75rem;"></i> {{ booking.check_out }}
+                    </div>
+                </td>
+                <td>
+                    <span style="font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; {% if booking.payment_status == 'paid' %}background: #d4edda; color: #155724;{% else %}background: #fff3cd; color: #856404;{% endif %}">
+                        {{ booking.get_payment_status_display }}
+                    </span>
+                    <div style="font-size: 0.75rem; margin-top: 4px; color: #555;">
+                        Due: <strong>GH₵ {{ booking.balance_due|floatformat:2 }}</strong>
+                    </div>
+                </td>
+                <td style="text-align: right;">
+                    <a href="{% url 'view_invoice' booking.id %}" target="_blank" class="btn-action" style="margin-right: 5px; color: var(--primary-gold); border-color: var(--primary-gold);">
+                        <i class="fas fa-print"></i> Invoice
+                    </a>
+                    {% if not booking.checked_out %}
+                    <a href="{% url 'checkout' booking.id %}" onclick="return confirm('Confirm guest check-out for Room {{ booking.room.room_number }}?')" class="btn-action" style="background: #d9534f; color: white; border: none;">
+                        Check Out
+                    </a>
+                    {% else %}
+                    <span style="font-size: 0.75rem; font-weight: 700; color: #888;">Checked Out</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 40px; color: #999;">No active reservations found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<!-- WALK-IN BOOKING MODAL -->
+<div id="walkinModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; overflow-y: auto; padding: 40px 20px;">
+    <div style="max-width: 550px; margin: 0 auto; background: white; padding: 35px; border-radius: 16px; border-top: 5px solid var(--primary-gold);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem;">New Walk-In Registration</h2>
+            <button onclick="document.getElementById('walkinModal').style.display='none'" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888;">&times;</button>
+        </div>
+
+        <form method="POST" action="{% url 'reception_walkin' %}">
+            {% csrf_token %}
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 5px;">Guest Full Name</label>
+                <input type="text" name="guest_name" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 5px;">Phone Number</label>
+                    <input type="tel" name="guest_phone" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 5px;">Email (Optional)</label>
+                    <input type="email" name="guest_email" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 5px;">Select Room</label>
+                <select name="room_id" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;">
+                    <option value="">Choose an available room...</option>
+                    {% for room in all_rooms %}
+                    <option value="{{ room.id }}">Room {{ room.room_number }} - {{ room.room_type }} (GH₵{{ room.price_per_night }}/night)</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 5px;">Check-In Date</label>
+                    <input type="date" name="check_in" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 5px;">Check-Out Date</label>
+                    <input type="date" name="check_out" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div>
+                    <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 5px;">Payment Status</label>
+                    <select name="payment_status" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;">
+                        <option value="paid">Fully Paid</option>
+                        <option value="pending">Pending / Deposit Only</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 5px;">Amount Paid (GH₵)</label>
+                    <input type="number" step="0.01" min="0" name="amount_paid" placeholder="Leave empty for full" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem;">
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="document.getElementById('walkinModal').style.display='none'" style="padding: 10px 20px; border-radius: 6px; border: 1px solid #ccc; background: white; cursor: pointer;">Cancel</button>
+                <button type="submit" style="padding: 10px 20px; border-radius: 6px; border: none; background: var(--dark-onyx); color: white; font-weight: 700; cursor: pointer;">Confirm Walk-In Booking</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

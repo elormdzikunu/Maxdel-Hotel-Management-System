@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Console | MAXDEL HOTEL{% endblock %}</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --primary-gold: #c5a059;
+      --dark-onyx: #1a1a1a;
+      --sidebar-bg: #111111;
+      --bg-light: #f8f9fa;
+      --accent-red: #d9534f;
+      --success-green: #28a745;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Montserrat', sans-serif; background: var(--bg-light); color: #333; }
+
+    .wrapper, .container { display: flex; min-height: 100vh; width: 100%; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      color: #fff;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+    }
+
+    .logo-area { text-align: center; margin-bottom: 40px; }
+    .logo-area h2 { font-family: 'Playfair Display', serif; letter-spacing: 3px; font-size: 1.5rem; }
+    .logo-area div { width: 30px; height: 2px; background: var(--primary-gold); margin: 10px auto; }
+    .role-badge { font-size: 0.6rem; letter-spacing: 2px; color: var(--primary-gold); text-transform: uppercase; }
+
+    .sidebar ul { list-style: none; flex: 1; }
+    .sidebar ul li { margin-bottom: 8px; }
+    
+    .sidebar a {
+      color: #aaa;
+      text-decoration: none;
+      padding: 12px 15px;
+      display: flex;
+      align-items: center;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: 0.3s;
+    }
+
+    .sidebar a i { margin-right: 15px; width: 20px; text-align: center; }
+    
+    .sidebar li.active a, .sidebar a:hover {
+      background: rgba(197, 160, 89, 0.1);
+      color: var(--primary-gold);
+    }
+
+    /* MAIN CONTENT AREA */
+    .main { flex: 1; margin-left: 260px; padding: 40px; min-width: 0; }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .top-nav h2 { font-family: 'Playfair Display', serif; font-size: 2rem; }
+
+    /* ALERT MESSAGES */
+    .alert-banner {
+      padding: 15px 20px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert-error, .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+    @media (max-width: 1024px) {
+      .sidebar { width: 80px; padding: 20px 10px; }
+      .sidebar h2, .sidebar p, .sidebar span, .logo-area div { display: none; }
+      .main { margin-left: 80px; padding: 20px; }
+      .sidebar a i { margin-right: 0; font-size: 1.2rem; }
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="sidebar">
+    <div class="logo-area">
+      <h2>MAXDEL</h2>
+      <div></div>
+      <p class="role-badge">{% block role_title %}MANAGEMENT{% endblock %}</p>
+    </div>
+
+    <ul>
+      {% block sidebar_nav %}
+        <li class="{% if request.resolver_match.url_name == 'md_dashboard' %}active{% endif %}"><a href="{% url 'md_dashboard' %}"><i class="fas fa-chart-pie"></i> Overview</a></li>
+        <li class="{% if request.resolver_match.url_name == 'manage_rooms' %}active{% endif %}"><a href="{% url 'manage_rooms' %}"><i class="fas fa-door-open"></i> Inventory</a></li>
+        <li class="{% if request.resolver_match.url_name == 'guest_history' %}active{% endif %}"><a href="{% url 'guest_history' %}"><i class="fas fa-user-friends"></i> Guests</a></li>
+        <li class="{% if request.resolver_match.url_name == 'view_monthly_report' or request.resolver_match.url_name == 'view_yearly_report' %}active{% endif %}"><a href="{% url 'view_monthly_report' %}"><i class="fas fa-file-invoice-dollar"></i> Reports</a></li>
+      {% endblock %}
+    </ul>
+
+    <div style="border-top: 1px solid #222; padding-top: 20px;">
+      <a href="{% url 'home' %}" style="color: var(--accent-red);"><i class="fas fa-sign-out-alt"></i> Exit to Main</a>
+    </div>
+  </div>
+
+  <div class="main">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert-banner alert-{{ message.tags|default:'info' }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

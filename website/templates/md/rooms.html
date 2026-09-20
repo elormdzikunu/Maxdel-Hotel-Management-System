@@ -1,0 +1,271 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Management | MAXDEL HOTEL</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-gold: #c5a059;
+            --dark-onyx: #1a1a1a;
+            --sidebar-bg: #111111;
+            --bg-light: #f8f9fa;
+            --accent-red: #d9534f;
+            --success-green: #28a745;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg-light); color: #333; }
+
+        .wrapper { display: flex; min-height: 100vh; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: #fff;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo-area { text-align: center; margin-bottom: 40px; }
+        .logo-area h2 { font-family: 'Playfair Display', serif; letter-spacing: 3px; font-size: 1.5rem; }
+        .logo-area div { width: 30px; height: 2px; background: var(--primary-gold); margin: 10px auto; }
+
+        .sidebar ul { list-style: none; flex: 1; }
+        .sidebar ul li { margin-bottom: 8px; }
+        .sidebar a {
+            color: #aaa;
+            text-decoration: none;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .sidebar a i { margin-right: 15px; width: 20px; text-align: center; }
+        .sidebar li.active a, .sidebar a:hover {
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--primary-gold);
+        }
+
+        /* MAIN CONTENT */
+        .main { flex: 1; margin-left: 260px; padding: 40px; }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .top-nav h2 { font-family: 'Playfair Display', serif; font-size: 2rem; }
+
+        /* FORM SECTION */
+        .form-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+        .section-header { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: #999; margin-bottom: 20px; display: block; }
+        
+        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: span 2; }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        input:focus { border-color: var(--primary-gold); }
+
+        .btn-gold {
+            background: var(--primary-gold);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        .btn-gold:hover { background: #b08d4a; }
+
+        /* TABLE SECTION */
+        .table-panel {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: #fdfdfd;
+            text-align: left;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #999;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        td { padding: 20px; border-bottom: 1px solid #f9f9f9; font-size: 0.85rem; }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .status-available { background: rgba(40, 167, 69, 0.1); color: var(--success-green); }
+        .status-maintenance { background: rgba(217, 83, 79, 0.1); color: var(--accent-red); }
+
+        .action-btn {
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+        .btn-disable { border: 1px solid var(--accent-red); color: var(--accent-red); }
+        .btn-disable:hover { background: var(--accent-red); color: white; }
+        .btn-enable { border: 1px solid var(--success-green); color: var(--success-green); }
+        .btn-enable:hover { background: var(--success-green); color: white; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 0; padding: 0; overflow: hidden; }
+            .main { margin-left: 0; padding: 20px; }
+            .grid-form { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="sidebar">
+        <div class="logo-area">
+            <h2>MAXDEL</h2>
+            <div></div>
+            <p style="font-size: 0.6rem; letter-spacing: 2px; color: var(--primary-gold);">MANAGEMENT</p>
+        </div>
+
+        <ul>
+            <li><a href="{% url 'md_dashboard' %}"><i class="fas fa-chart-pie"></i> Overview</a></li>
+            <li class="active"><a href="#"><i class="fas fa-door-open"></i> Inventory</a></li>
+            <li><a href="{% url 'guest_history' %}"><i class="fas fa-user-friends"></i> Guests</a></li>
+            <li><a href="/secure-md/report/monthly/"><i class="fas fa-file-invoice-dollar"></i> Reports</a></li>
+        </ul>
+
+        <div style="border-top: 1px solid #222; padding-top: 20px;">
+            <a href="{% url 'home' %}" style="color: var(--accent-red);"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="top-nav">
+            <div>
+                <a href="{% url 'md_dashboard' %}" style="text-decoration:none; font-size:0.8rem; color:var(--primary-gold); font-weight:600;">
+                    <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
+                </a>
+                <h2 style="margin-top:10px;">Inventory Management</h2>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <span class="section-header">Register New Room</span>
+            <form method="post" action="{% url 'add_room' %}" class="grid-form">
+                {% csrf_token %}
+                <div class="full-width">
+                    <input type="text" name="room_number" placeholder="Room Number (e.g., 101)" required>
+                </div>
+                <div>
+                    <select name="room_type">
+                        <option value="Deluxe">Deluxe Room</option>
+                        <option value="Executive">Executive Suite</option>
+                        <option value="Presidential">Presidential Suite</option>
+                    </select>
+                </div>
+                <div>
+                    <input type="number" name="price" placeholder="Price per night (GH₵)" required>
+                </div>
+                <div class="full-width">
+                    <button type="submit" class="btn-gold">Add to Inventory</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-panel">
+            <div style="padding: 20px; border-bottom: 1px solid #eee;">
+                <span class="section-header" style="margin:0;">Active Assets</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Room</th>
+                        <th>Classification</th>
+                        <th>Rate / Night</th>
+                        <th>Current Status</th>
+                        <th style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for room in rooms %}
+                    <tr>
+                        <td><strong style="color: var(--dark-onyx);"># {{ room.room_number }}</strong></td>
+                        <td style="color: #666;">{{ room.room_type }}</td>
+                        <td><span style="font-weight:600;">GH₵{{ room.price_per_night }}</span></td>
+                        <td>
+                            <span class="status-badge 
+                                  {% if room.status == 'available' %}status-available{% elif room.status == 'occupied' %}status-maintenance{% elif room.status == 'cleaning' %}status-maintenance{% else %}status-maintenance{% endif %}"
+                                  style="{% if room.status == 'cleaning' %}background: #fff3cd; color: #856404;{% elif room.status == 'occupied' %}background: #e2e3e5; color: #383d41;{% endif %}">
+                                {{ room.get_status_display|upper }}
+                            </span>
+                        </td>
+                        <td style="text-align:right;">
+                            <form method="POST" action="{% url 'update_room_status' room.id %}" style="display: inline-flex; gap: 6px;">
+                                {% csrf_token %}
+                                <select name="status" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; border: 1px solid #ccc;">
+                                    {% for code, name in room.ROOM_STATUS %}
+                                    <option value="{{ code }}" {% if room.status == code %}selected{% endif %}>{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" style="background: var(--dark-onyx); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                                    Save
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding: 40px; color: #999;">
+                            No rooms found in the inventory database.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
