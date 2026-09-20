@@ -27,6 +27,10 @@ SECRET_KEY = os.environ.get(
     'django-insecure-dev-key'
 )
 
+# Paystack Credentials
+PAYSTACK_SECRET_KEY = os.environ.get('PAYSTACK_SECRET_KEY', '')
+PAYSTACK_PUBLIC_KEY = os.environ.get('PAYSTACK_PUBLIC_KEY', '')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

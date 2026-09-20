@@ -136,7 +136,12 @@ def booking(request):
         return redirect("home")
 
     hotel_settings = HotelSettings.get_settings()
-    return render(request, "booking.html", {"rooms": rooms, "hotel_settings": hotel_settings})
+    paystack_public_key = getattr(settings, 'PAYSTACK_PUBLIC_KEY', os.environ.get('PAYSTACK_PUBLIC_KEY', ''))
+    return render(request, "booking.html", {
+        "rooms": rooms, 
+        "hotel_settings": hotel_settings, 
+        "paystack_public_key": paystack_public_key
+    })
 
 
 # =========================

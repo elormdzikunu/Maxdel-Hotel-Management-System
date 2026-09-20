@@ -269,7 +269,7 @@
         .then(data => {
             if (data.status) {
                 let handler = PaystackPop.setup({
-                    key: 'pk_live_22bc28c39c9898aca55a9658ed7c7c7195ce30c6',
+                    key: "{{ paystack_public_key|default:'' }}",
                     email: formData.guest_email,
                     amount: data.amount,
                     currency: "GHS",
